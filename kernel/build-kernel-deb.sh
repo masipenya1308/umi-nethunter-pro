@@ -9,7 +9,8 @@
 # /usr/lib/linux-image-<ver>/qcom/. This script produces exactly that package from
 # the *working* umi kernel tree (umi-mainline), so nothing here re-derives the port.
 #
-# Env: UMI_MAINLINE (default ../umi-mainline), TREE, OUT, KERNEL_REF, JOBS, CROSS_COMPILE
+# Env: UMI_MAINLINE (default ../umi-mainline), TREE, OUT, KERNEL_REF, KERNEL_REPO,
+#      JOBS, CROSS_COMPILE
 # Out: kernel/out/linux-image-*.deb (+ headers), build/out/config-effective
 set -e
 
@@ -18,6 +19,8 @@ UMI=${UMI_MAINLINE:-$HERE/../umi-mainline}
 TREE=${TREE:-$HERE/build/linux}
 OUT=${OUT:-$HERE/build/out}
 KERNEL_REF=${KERNEL_REF:-v6.12}
+# kernel.org is not reachable from GitHub runners often enough to bother retrying
+KERNEL_REPO=${KERNEL_REPO:-https://github.com/gregkh/linux.git}
 CROSS_COMPILE=${CROSS_COMPILE:-aarch64-linux-gnu-}
 JOBS=${JOBS:-$(nproc)}
 MK="ARCH=arm64 CROSS_COMPILE=$CROSS_COMPILE O=$OUT"
@@ -27,8 +30,7 @@ die() { echo "!! $*" >&2; exit 1; }
 [ -f "$UMI/dts/sm8250-xiaomi-umi-common.dtsi" ] ||
 	die "umi-mainline not found at $UMI — set UMI_MAINLINE=/path/to/umi-mainline"
 
-[ -d "$TREE" ] || git clone --depth 1 --branch "$KERNEL_REF" \
-	https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git "$TREE"
+[ -d "$TREE" ] || git clone --depth 1 --branch "$KERNEL_REF" "$KERNEL_REPO" "$TREE"
 
 echo "== [1/3] umi-mainline recipe: tree surgery + verified config + build"
 TREE="$TREE" OUT="$OUT" WS="$UMI" JOBS="$JOBS" CROSS_COMPILE="$CROSS_COMPILE" \
