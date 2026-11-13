@@ -1,0 +1,35 @@
+diff --git a/devices/qcom/packages-base.yaml b/devices/qcom/packages-base.yaml
+index 6eeb70e..3c31ed1 100644
+--- a/devices/qcom/packages-base.yaml
++++ b/devices/qcom/packages-base.yaml
+@@ -20,12 +20,17 @@ actions:
+     packages:
+       - gstreamer1.0-plugins-base-apps
+       - yq
+-{{- if ne $device "wip" }}
++{{- if and (ne $device "wip") (ne $device "sm8250") }}
+       - {{ $device }}-support
+ {{- else }}
+       - qcom-support-common
+       - openssh-server
+ 
++  - action: overlay
++    description: Keep the initramfs small enough for Android boot ramdisk limits
++    source: umi/initramfs-tools
++    destination: /etc/initramfs-tools/conf.d
++
+   - action: overlay
+     description: Copy additional packages to image
+     source: packages
+diff --git a/devices/qcom/umi/initramfs-tools/umi.conf b/devices/qcom/umi/initramfs-tools/umi.conf
+new file mode 100644
+index 0000000..e0a2209
+--- /dev/null
++++ b/devices/qcom/umi/initramfs-tools/umi.conf
+@@ -0,0 +1,6 @@
++# Xiaomi Mi 10 (umi). Both the UFS block driver and ext4 are built into the
++# umi kernel, so the initramfs only needs the modules the root mount asks for.
++# The Android boot ramdisk slot on this device is small; MODULES=most does not
++# fit comfortably. gzip is what the other umi boot images use.
++MODULES=dep
++COMPRESS=gzip

@@ -1,0 +1,22 @@
+diff --git a/build.sh b/build.sh
+index 2c5a83b..4cafc8a 100755
+--- a/build.sh
++++ b/build.sh
+@@ -107,7 +107,7 @@ SUPPORTED_BRANCHES="kali-rolling kali-dev kali-last-snapshot"
+ SUPPORTED_DESKTOPS="phosh plasma-mobile"
+ SUPPORTED_FILESYSTEMS="ext4 btrfs f2fs"
+ SUPPORTED_PARTITION_TABLES="gpt mbr"
+-SUPPORTED_VARIANTS="amd64 pinephone pinetab sunxi pinephonepro pinetab2 rockchip librem5 sdm845 sdm670 sm6350 sc7280 sm7150 rootfs"
++SUPPORTED_VARIANTS="amd64 pinephone pinetab sunxi pinephonepro pinetab2 rockchip librem5 sdm845 sdm670 sm6350 sc7280 sm7150 sm8250 rootfs"
+ 
+ # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+@@ -710,7 +710,7 @@ case "${VARIANT}" in
+     FAMILY="librem5"
+     ARCH="arm64"
+     ;;
+-  "sdm845"|"sdm670"|"sm6350"|"sc7280"|"sm7150" )
++  "sdm845"|"sdm670"|"sm6350"|"sc7280"|"sm7150"|"sm8250" )
+     FAMILY="qcom"
+     ARCH="arm64"
+     SECTSIZE="$(tomlq -r '.bootimg.pagesize' "devices/qcom/configs/${VARIANT}.toml")"

@@ -1,0 +1,33 @@
+diff --git a/devices/qcom/configs/sm8250.toml b/devices/qcom/configs/sm8250.toml
+new file mode 100644
+index 0000000..45933e4
+--- /dev/null
++++ b/devices/qcom/configs/sm8250.toml
+@@ -0,0 +1,27 @@
++# Xiaomi Mi 10 (umi, SM8250 / "kona", M2001J2C).
++#
++# Load addresses are the ones the umi bootloader (ABL) actually accepts; base
++# MUST be 0. With mkbootimg's default 0x10000000 the resulting 0x10008000
++# kernel offset makes ABL drop straight back to fastboot.
++#
++# header_version 2 carries the DTB in the header's dtb segment. dtb_size must
++# be non-zero: with a zero size ABL returns EFI_NOT_FOUND. The umi device tree
++# must also keep qcom,msm-id / qcom,board-id (pack-umi.py checks this).
++[bootimg]
++base = 0x0
++kernel = 0x8000
++ramdisk = 0x1000000
++second = 0
++tags = 0x100
++dtb = 0x1f00000
++pagesize = 4096
++version = 2
++
++# The DTB is picked as qcom/<chipset>-<vendor>-<model>-<variant>.dtb, so
++# "wifi" selects umi's full-featured tree (sm8250-xiaomi-umi-wifi.dtb: panel,
++# touch, GPU, PCIe/QCA6390, battery). It is not a hardware variant.
++[[device]]
++vendor = "xiaomi"
++model = "umi"
++variant = "wifi"
++append = "console=tty0 console=ttyMSM0,115200n8 pd_ignore_unused clk_ignore_unused regulator_ignore_unused arm-smmu.disable_bypass=0 keep_bootcon"
